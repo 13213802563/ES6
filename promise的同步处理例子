@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+</head>
+	<body>
+		
+	</body>
+<script>
+	////////es5
+	var  ajax=function(callback){
+		console.log('执行1');
+		setTimeout(function(){
+			callback&&callback.call()
+		},1000);
+	}
+	ajax(function(){
+		console.log('timeout1')
+	})
+	//////es6
+   var  ajax=function(){
+   	console.log('执行2');
+   	return new Promise(function(resolve,reject){
+   		setTimeout(function(){
+   			resolve()
+   		},1000);
+   	})
+   };
+   ajax().then(function(){
+   	console.log('promise','timeout2');
+   })
+   ////////es6多
+   var  ajax=function(){
+   	console.log('执行3');
+   	return new Promise(function(resolve,reject){
+   		setTimeout(function(){
+   			resolve()
+   		},1000);
+   	})
+   };
+   ajax()
+     .then(function(){
+   	return new Promise(function(resolve,reject){
+   		setTimeout(function(){
+   			resolve()
+   		},2000);
+   	})
+   })
+     .then(function(){
+   	console.log('timeout3');
+   })
+   ////catch错误
+     var  ajax=function(num){
+   	   console.log('执行4');
+   	   return new Promise(function(resolve,reject){
+   		if(num>5){
+   			resolve();
+   		}
+   		else{
+   			throw new Error('出错了');
+   		}
+   	})
+   };
+   //输入6
+   ajax(6)
+   .then(function(){
+   	 console.log('log',6);
+   })
+   .catch(function(err){
+   	 console.log('catch',err);
+   });
+
+   //输入3
+   ajax(3)
+   .then(function(){
+   	 console.log('log',3);
+   })
+   .catch(function(err){
+   	 console.log('catch',err);
+   });
+//所有图片加载完后才加载页面显示在页面上
+{
+		function loadImg(src){
+			 return new Promise(function(resolve,reject){
+			var img=document.createElement('img');
+			img.src=src;
+			img.onload=function(){
+				resolve(img);
+			}
+      img.onerror=function(err){
+				reject(err);
+			}
+		 })
+		}
+		function showImgs(imgs){
+			imgs.forEach(function(img){
+				document.body.appendChild(img);
+			})
+		}
+		//把多个promise当成一个promise实例使用
+		Promise.all([
+//			loadImg("chrome-search://ntpicon/size/24@1x/https://desktop.github.com/"),
+//			loadImg("chrome-search://ntpicon/size/24@1x/https://desktop.github.com/"),
+//			loadImg("chrome-search://ntpicon/size/24@1x/https://desktop.github.com/")
+		]).then(showImgs);
+}
+//有一个图加载完就显示在页面上
+{
+	function loadImg(src){
+	  return new Promise(function(resolve,reject){
+			var img=document.createElement('img');
+			img.src=src;
+			img.onload=function(){
+				resolve(img);
+			}
+			img.onerror=function(err){
+				reject(err);
+			}
+	 })
+}
+	function showImgs(imgs){
+       var p=document.createElement('p');
+       p.appendChild(img);
+	     document.body.appendChild(img);
+	  }
+
+//有一个状态率先改变，整个就改变了
+Promise.race([
+	loadImg("http://////.jpg"),
+	loadImg("http://////.jpg"),
+	loadImg("http://////.jpg")
+   ]).then(showImgs);
+}
+</script>
+</html>
